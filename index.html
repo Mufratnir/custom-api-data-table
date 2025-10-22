@@ -1,0 +1,139 @@
+<!-- HTML -->
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>js table</title>
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header>
+      <div class="container">
+        <div class="header-wrapper">
+          <h1>Admin</h1>
+          <div class="search-box">
+            <input id="search" placeholder="Search user ....." />
+            <div class="search-icon">
+              <span class="material-symbols-outlined"> search </span>
+            </div>
+          </div>
+          <div>
+          
+            <button class="button" id="addUser"><span>add new user </span></button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <section class="section-user-add">
+      <div class="form-wrapper">
+        <div class="close-button">
+          <span class="material-symbols-outlined"> close </span>
+        </div>
+        <form action="" id="user-form">
+          <h2>Add user</h2>
+          <div>
+            <label for="name-input">Name</label>
+            <input
+              id="name"
+              type="text"
+              placeholder="Enter your Name"
+              class="form-input"
+              required
+            />
+          </div>
+          <div>
+            <label for="email-input">User Name</label>
+            <input
+              id="user-name"
+              type="text"
+              placeholder="Enter your User Name"
+              class="form-input"
+              required
+            />
+          </div>
+          <div>
+            <label for="Email">Email</label>
+            <input
+              id="email"
+              type="text"
+              placeholder="Enter your Email"
+              class="form-input"
+              required
+            />
+          </div>
+          <div>
+            <label for="phone Number">phone Number</label>
+            <input
+              id="phone-number"
+              type="text"
+              class="form-input"
+              placeholder="Enter your Phone Number"
+              required
+            />
+          </div>
+          <div>
+            <label for="website"> Website</label>
+            <input
+              id="website"
+              type="text"
+              class="form-input"
+              placeholder="Enter your Address"
+              required
+            />
+          </div>
+          <input type="submit" value="Add User" class="submit-btn" />
+        </form>
+      </div>
+    </section>
+
+    <section class="table-section">
+      <table class="table" id="user-table">
+        <tr class="table-header">
+          <th>ID</th>
+          <th>NAME</th>
+          <th>User Name</th>
+          <th>Email</th>
+          <th>Phone Number</th>
+          <th >Website</th>
+          <th class="is-right">ACTIONS </th>
+        </tr>
+        <!-- <tr class="table-row">
+          <td id="id"></td>
+          <td id="name"></td>
+          <td id="email"></td>
+          <td id="salary"></td>
+          <td id="dob"></td>
+          <td class="is-right">
+            <button class="btn edit">
+              <span class="material-symbols-outlined"> edit </span>
+            </button>
+            <button id="delete-button" class="btn delete">
+              <span class="material-symbols-outlined"> delete </span>
+            </button>
+          </td>
+        </tr> -->
+      </table>
+    </section>
+    <section class="pagination-section">
+      <div class="pagination" id="pagination">
+        <a href="#" id="prev"> Prev</a>
+        <a href="#" class="page-link">1</a>
+        <a href="#" class="active page-link">2</a>
+        <a href="#" class="page-link">3</a>
+        <a href="#" class="page-link">4</a>
+        <a href="#" class="page-link">5</a>
+        <a href="#" id="next">Next</a>
+      </div>
+    </section>
+
+    <script src="script.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  </body>
+</html>
