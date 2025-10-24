@@ -1,9 +1,15 @@
 <?php
-
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json");
 header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
-header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
+header("Access-Control-Allow-Headers: Content-Type, Authorization");
+
+$method = $_SERVER['REQUEST_METHOD'];
+
+if ($method === 'OPTIONS') {
+    http_response_code(200);
+    exit();
+}
 
 // ========================================
 // 🗄️ Database Connection
@@ -13,7 +19,7 @@ $con = mysqli_connect("localhost", "root", "", "API");
 
 // If connection fails, return an error as JSON and stop script
 if (!$con) {
-    echo json_encode(["error" => "Database Connection failed: " . mysqli_connect_error()]);
+    echo json_encode(value: ["error" => "Database Connection failed: " . mysqli_connect_error()]);
     exit;
 }
 
@@ -22,15 +28,14 @@ if (!$con) {
 // ⚙️ Detect HTTP Method & Input Data
 // ========================================
 // Determine the request method (GET, POST, PUT, DELETE, etc.)
-$method = $_SERVER['REQUEST_METHOD'];
-$input = json_decode(file_get_contents("php://input"),  associative: true);
+$input = json_decode(file_get_contents("php://input"), true );
 
 
 // ========================================
 // 📄 GET Request → Read All Data
 // ========================================
 if ($method === 'GET') {
-    $sql = "SELECT * FROM data";
+    $sql = "SELECT * FROM DATA";
     $result = mysqli_query($con, $sql);
 
     if ($result) {
@@ -54,7 +59,7 @@ if ($method === 'GET') {
         $phone = mysqli_real_escape_string($con, $input['phone'] ?? '');
         $website = mysqli_real_escape_string($con, $input['website']  ?? '');
 
-        $sql = "INSERT INTO data (name, username, email, phone, website) 
+        $sql = "INSERT INTO DATA (name, username, email, phone, website) 
         VALUES ('$name', '$username', '$email', '$phone', '$website')";
 
         $result = mysqli_query($con, $sql);
@@ -80,7 +85,7 @@ if ($method === 'GET') {
     $phone    = mysqli_real_escape_string($con, $input['phone'] ?? '');
     $website  = mysqli_real_escape_string($con, $input['website'] ?? '');
 
-    $sql = "UPDATE data
+    $sql = "UPDATE DATA
                 SET name='$name', username='$username', email='$email', phone='$phone', website='$website'
                 WHERE id=$id";
 
@@ -104,7 +109,7 @@ if ($method === 'GET') {
     if (! empty($input['id'])){
         $id = intval($input['id']);
 
-        $sql = "DELETE FROM data WHERE id = $id";
+        $sql = "DELETE FROM DATA WHERE id = $id";
 
         if (mysqli_query($con, $sql)){
             echo json_encode(["success" => "User deleted successfully"]);
@@ -114,9 +119,7 @@ if ($method === 'GET') {
     }else{
         echo json_encode(["error" => "Missing ID for delete"]);
     }
-}elseif($method === 'OPTION'){
-    http_response_code(200);
-} 
+}
 else {
     http_response_code(405);
     echo json_encode(["error" => "Method not allowed"]);

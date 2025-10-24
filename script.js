@@ -1,6 +1,7 @@
 const closeButton = document.querySelector(".close-button");
 const sectionUserAdd = document.querySelector(".section-user-add");
 const form = document.querySelector("#user-form");
+const id = document.querySelector("#userId");
 const mainName = document.querySelector("#name");
 const userName = document.querySelector("#user-name");
 const email = document.querySelector("#email");
@@ -49,6 +50,7 @@ form.addEventListener("submit", async (e) => {
   e.preventDefault();
 
   const userData = {
+    id: id.value.trim(),
     name: mainName.value.trim(),
     username: userName.value.trim(),
     email: email.value.trim(),
@@ -56,7 +58,7 @@ form.addEventListener("submit", async (e) => {
     website: website.value.trim(),
   };
 
-  if (!isEdit) {
+  if (isEdit == false) {
     try {
       const response = await fetch(apiUrl, {
         method: "POST",
@@ -81,9 +83,37 @@ form.addEventListener("submit", async (e) => {
       console.error("❌ Failed to add user:", error);
       alert("❌ Failed to add user");
     }
+  } else {
+    // 🟡 Update existing user
+    const userId = editRow.children[0].textContent;
+    console.log(userId);
+    const updatedData = { id: userId, ...userData };
+    try {
+      const response = await fetch(apiUrl, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updatedData),
+      });
+      const result = await response.json();
+
+      if (result.success) {
+        alert("✅ User updated successfully");
+        form.reset();
+        sectionUserAdd.style.display = "none";
+        isEdit = false;
+        submitButton.textContent = "Add User"; // reset button text
+        editRow = null;
+        userTable.innerHTML = "";
+        apiCall();
+      } else {
+        alert("❌ " + (result.error || "Failed to update user"));
+      }
+    } catch (err) {
+      console.error(err);
+      alert("❌ Failed to update user");
+    }
   }
 });
-
 function userTab(users) {
   console.log(users);
   users.forEach((user) => {
@@ -131,31 +161,62 @@ searchInput.addEventListener("input", (e) => {
 ❌ Delete / ✏️ Edit Logic
 ============================= */
 userTable.addEventListener("click", (e) => {
-  const target = e.target.closest("button");
+  const editBtn = e.target.closest(".edit");
+  const deleteBtn = e.target.closest(".delete");
 
-  if (!target) return;
+  // 🧩 Handle Edit
+  // if (!editBtn) return;
 
-  if (target.classList.contains("delete")) {
-    target.closest("tr").remove();
-    allRows = Array.from(userTable.querySelectorAll(".table-row"));
-    filterRows = [...allRows];
-    displayTableRows();
-  }
+  const row = editBtn.closest("tr");
+  // if (!row) return;
 
-  if (target.classList.contains("edit")) {
-    isEdit = true;
-    sectionUserAdd.style.display = "flex";
-    const selectRow = target.closest("tr");
-    editRow = selectRow;
-    mainName.value = selectRow.children[1].textContent;
-    userName.value = selectRow.children[2].textContent;
-    email.value = selectRow.children[3].textContent;
-    phoneNumber.value = selectRow.children[4].textContent;
-    website.value = selectRow.children[5].textContent;
-    submitButton.value = "Save Changes";
+  const cells = row.querySelectorAll("td");
+
+  id.value = cells[0].textContent;
+  mainName.value = cells[1].textContent;
+  userName.value = cells[2].textContent;
+  email.value = cells[3].textContent;
+  phoneNumber.value = cells[4].textContent;
+  website.value = cells[5].textContent;
+
+  sectionUserAdd.style.display = "flex";
+  submitButton.value = "Update User";
+
+  console.log("Edit mode ON");
+  editRow = row;
+  isEdit = true;
+
+  // 🧩 Handle Delete
+  if (deleteBtn) {
+    const row = deleteBtn.closest("tr");
+    const userId = row.children[0].textContent;
+
+    if (confirm("Are you sure you want to delete this user?")) {
+      deleteUser(userId, row);
+    }
   }
 });
 
+async function deleteUser(id, row) {
+  try {
+    const response = await fetch(apiUrl, {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id }),
+    });
+    const result = await response.json();
+
+    if (result.success) {
+      alert("🗑️ User deleted successfully");
+      row.remove();
+    } else {
+      alert("❌ " + result.error);
+    }
+  } catch (error) {
+    console.error("Delete failed:", error);
+    alert("❌ Failed to delete user");
+  }
+}
 /* =============================
 👁️ Show Table Rows
 ============================= */
