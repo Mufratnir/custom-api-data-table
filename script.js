@@ -13,7 +13,10 @@ const searchInput = document.querySelector("#search");
 const paginationContainer = document.getElementById("pagination");
 const addUser = document.querySelector("#addUser");
 
-const apiUrl = "http://localhost/api/api.php";
+const getApiUrl = "http://localhost/api/php/get.php";
+const postApiUrl = "http://localhost/api/php/post.php";
+const putApiUrl = "http://localhost/api/php/put.php";
+const deleteApiUrl = "http://localhost/api/php/delete.php";
 
 let isEdit = false;
 let isDataLoaded = false;
@@ -38,7 +41,7 @@ closeButton.addEventListener("click", () => {
 
 async function apiCall() {
   try {
-    const response = await fetch(apiUrl);
+    const response = await fetch(getApiUrl);
     const users = await response.json();
     userTab(users);
   } catch (error) {
@@ -60,7 +63,7 @@ form.addEventListener("submit", async (e) => {
 
   if (isEdit == false) {
     try {
-      const response = await fetch(apiUrl, {
+      const response = await fetch(postApiUrl, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -76,8 +79,8 @@ form.addEventListener("submit", async (e) => {
         form.reset();
         userTable.innerHTML = "";
         apiCall();
-      } else {
-        alert("❌ " + (result.error || "Failed to save user"));
+       } else {
+         alert("❌ " + (result.error || "Failed to save user"));
       }
     } catch (error) {
       console.error("❌ Failed to add user:", error);
@@ -89,7 +92,7 @@ form.addEventListener("submit", async (e) => {
     console.log(userId);
     const updatedData = { id: userId, ...userData };
     try {
-      const response = await fetch(apiUrl, {
+      const response = await fetch(putApiUrl, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(updatedData),
@@ -199,7 +202,7 @@ userTable.addEventListener("click", (e) => {
 
 async function deleteUser(id, row) {
   try {
-    const response = await fetch(apiUrl, {
+    const response = await fetch(deleteApiUrl, {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ id }),
